@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michigan Slang Translator</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        input, button { font-size: 18px; padding: 10px; margin: 10px; }
+        #output { font-size: 20px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Michigan Slang Translator</h1>
+    <input type="text" id="slangInput" placeholder="Enter slang (e.g., Bussin)">
+    <button onclick="translateSlang()">Translate</button>
+    <p id="output"></p>
+
+    <script>
+        async function translateSlang() {
+            const slang = document.getElementById("slangInput").value;
+            const response = await fetch(`https://michigan-slang-api.onrender.com/translate?word=${slang}`);
+            const data = await response.json();
+            document.getElementById("output").innerText = `Translation: ${data.translation}`;
+        }
+    </script>
+</body>
+</html>
