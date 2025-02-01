@@ -7,112 +7,106 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            height: 100vh;
-        }
-
-        /* Sidebar for slang words */
-        .sidebar {
-            width: 30%;
-            background: #222;
-            color: white;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .sidebar h2 {
             text-align: center;
-            margin-bottom: 15px;
+            background-color: #f4f4f4;
         }
-
-        .slang-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .slang-list li {
-            padding: 10px;
-            border-bottom: 1px solid #444;
-            cursor: pointer;
-        }
-
-        .slang-list li:hover {
-            background: #444;
-        }
-
-        /* Main content area */
-        .main-content {
-            flex-grow: 1;
+        .container {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: space-around;
             padding: 20px;
         }
-
-        input, button {
-            padding: 10px;
-            font-size: 16px;
-            margin: 5px;
+        .slang-list {
+            width: 30%;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
-
-        #translation {
+        .translator {
+            width: 50%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 80%;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+        li:hover {
+            background: #ddd;
+        }
+        .submission-section {
+            background: white;
+            padding: 15px;
             margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar for slang words -->
-    <div class="sidebar">
-        <h2>Michigan Slang</h2>
-        <ul class="slang-list">
-            <li onclick="selectSlang('What up doe')">What up doe?</li>
-            <li onclick="selectSlang('Bussin')">Bussin’</li>
-            <li onclick="selectSlang('No cap')">No cap</li>
-            <li onclick="selectSlang('The D')">The D</li>
-            <li onclick="selectSlang('Buffs')">Buffs</li>
-            <li onclick="selectSlang('Slide')">Slide</li>
-            <li onclick="selectSlang('Jit')">Jit</li>
-            <li onclick="selectSlang('Bet')">Bet</li>
-            <li onclick="selectSlang('Heavy')">Heavy</li>
-            <li onclick="selectSlang('Dog')">Dog</li>
-            <li onclick="selectSlang('Blowed')">Blowed</li>
-            <li onclick="selectSlang('Ain’t it?')">Ain’t it?</li>
-            <li onclick="selectSlang('Flick')">Flick</li>
-            <li onclick="selectSlang('Mug')">Mug</li>
-            <li onclick="selectSlang('Fasho')">Fasho</li>
-            <li onclick="selectSlang('Coney')">Coney</li>
-            <li onclick="selectSlang('You straight?')">You straight?</li>
-            <li onclick="selectSlang('Finna')">Finna</li>
-            <li onclick="selectSlang('Out cold')">Out cold</li>
-            <li onclick="selectSlang('Throwed')">Throwed</li>
-            <li onclick="selectSlang('Wetty')">Wetty</li>
-        </ul>
+    <h1>Michigan Slang Translator</h1>
+    
+    <div class="container">
+        <div class="slang-list">
+            <h2>Popular Michigan Slang</h2>
+            <ul id="slangWords">
+                <li onclick="selectSlang('What up doe?')">What up doe?</li>
+                <li onclick="selectSlang('Bussin')">Bussin</li>
+                <li onclick="selectSlang('No cap')">No cap</li>
+                <li onclick="selectSlang('Buffs')">Buffs</li>
+                <li onclick="selectSlang('Coney')">Coney</li>
+                <li onclick="selectSlang('Out cold')">Out cold</li>
+            </ul>
+        </div>
+
+        <div class="translator">
+            <h2>Translate Slang</h2>
+            <input type="text" id="wordInput" placeholder="Enter Michigan slang...">
+            <button onclick="translateWord()">Translate</button>
+            <p id="translation">Translation will appear here...</p>
+        </div>
     </div>
 
-    <!-- Main translation area -->
-    <div class="main-content">
-        <h1>Michigan Slang Translator</h1>
-        <input type="text" id="wordInput" placeholder="Enter a Michigan slang word">
-        <button onclick="translateWord()">Translate</button>
-        <p id="translation">Translation will appear here.</p>
+    <div class="submission-section">
+        <h2>Submit Your Own Michigan Slang</h2>
+        <input type="text" id="newSlangWord" placeholder="Enter slang word...">
+        <input type="text" id="newSlangDefinition" placeholder="Enter slang definition...">
+        <button onclick="addSlang()">Submit</button>
     </div>
 
     <script>
+        let userAddedSlang = {}; // Object to store user-submitted slang
+
         function translateWord() {
             const word = document.getElementById("wordInput").value.trim();
+            console.log(`User searched for: ${word}`); // Log search input
+
             if (word === "") {
                 alert("Please enter a word!");
                 return;
             }
-        
+
+            // If the word was added by the user, show its definition
+            if (userAddedSlang[word]) {
+                document.getElementById("translation").innerText = `Translation: ${userAddedSlang[word]}`;
+                return;
+            }
+
+            // Fetch translation from API
             fetch(`https://michigan-slang-api.onrender.com/translate?word=${encodeURIComponent(word)}`)
                 .then(response => response.json())
                 .then(data => {
@@ -127,11 +121,36 @@
                     document.getElementById("translation").innerText = "Error fetching translation. Try again later.";
                 });
         }
-        
-        // ✅ Fix: Automatically translate when clicking a slang term
+
         function selectSlang(word) {
             document.getElementById("wordInput").value = word;
-            translateWord(); // Call translation function immediately
+            translateWord();
+        }
+
+        function addSlang() {
+            const word = document.getElementById("newSlangWord").value.trim();
+            const definition = document.getElementById("newSlangDefinition").value.trim();
+
+            if (word === "" || definition === "") {
+                alert("Please enter both a slang word and its definition.");
+                return;
+            }
+
+            // Store in user-added slang dictionary
+            userAddedSlang[word] = definition;
+
+            // Add to slang list dynamically
+            const slangList = document.getElementById("slangWords");
+            const newItem = document.createElement("li");
+            newItem.textContent = word;
+            newItem.onclick = function() { selectSlang(word); };
+            slangList.appendChild(newItem);
+
+            // Clear input fields
+            document.getElementById("newSlangWord").value = "";
+            document.getElementById("newSlangDefinition").value = "";
+
+            alert(`"${word}" added! Click it in the list to see the definition.`);
         }
     </script>
 
