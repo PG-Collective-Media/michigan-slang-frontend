@@ -7,73 +7,130 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
             background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
+            display: flex;
+            height: 100vh;
         }
-        h1 {
-            color: #333;
-        }
-        input {
-            padding: 10px;
-            width: 300px;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-left: 10px;
-            cursor: pointer;
-            background-color: #007BFF;
+
+        /* Sidebar for slang words */
+        .sidebar {
+            width: 30%;
+            background: #222;
             color: white;
-            border: none;
-            border-radius: 5px;
+            padding: 20px;
+            overflow-y: auto;
         }
-        button:hover {
-            background-color: #0056b3;
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 15px;
         }
-        #translationResult {
+
+        .slang-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .slang-list li {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+        }
+
+        .slang-list li:hover {
+            background: #444;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        #translation {
             margin-top: 20px;
             font-size: 18px;
             font-weight: bold;
+            color: #333;
         }
     </style>
 </head>
 <body>
 
-    <h1>Michigan Slang Translator</h1>
-    <p>Enter a Michigan slang term to get its meaning.</p>
+    <!-- Sidebar for slang words -->
+    <div class="sidebar">
+        <h2>Michigan Slang</h2>
+        <ul class="slang-list">
+            <li onclick="selectSlang('What up doe')">What up doe?</li>
+            <li onclick="selectSlang('Bussin')">Bussin’</li>
+            <li onclick="selectSlang('No cap')">No cap</li>
+            <li onclick="selectSlang('The D')">The D</li>
+            <li onclick="selectSlang('Buffs')">Buffs</li>
+            <li onclick="selectSlang('Slide')">Slide</li>
+            <li onclick="selectSlang('Jit')">Jit</li>
+            <li onclick="selectSlang('Bet')">Bet</li>
+            <li onclick="selectSlang('Heavy')">Heavy</li>
+            <li onclick="selectSlang('Dog')">Dog</li>
+            <li onclick="selectSlang('Blowed')">Blowed</li>
+            <li onclick="selectSlang('Ain’t it?')">Ain’t it?</li>
+            <li onclick="selectSlang('Flick')">Flick</li>
+            <li onclick="selectSlang('Mug')">Mug</li>
+            <li onclick="selectSlang('Fasho')">Fasho</li>
+            <li onclick="selectSlang('Coney')">Coney</li>
+            <li onclick="selectSlang('You straight?')">You straight?</li>
+            <li onclick="selectSlang('Finna')">Finna</li>
+            <li onclick="selectSlang('Out cold')">Out cold</li>
+            <li onclick="selectSlang('Throwed')">Throwed</li>
+            <li onclick="selectSlang('Wetty')">Wetty</li>
+        </ul>
+    </div>
 
-    <input type="text" id="wordInput" placeholder="Enter Michigan slang">
-    <button id="translateButton">Translate</button>
-    <div id="translationResult"></div>
+    <!-- Main translation area -->
+    <div class="main-content">
+        <h1>Michigan Slang Translator</h1>
+        <input type="text" id="wordInput" placeholder="Enter a Michigan slang word">
+        <button onclick="translateWord()">Translate</button>
+        <p id="translation">Translation will appear here.</p>
+    </div>
 
     <script>
-        document.getElementById("translateButton").addEventListener("click", function() {
-            let userInput = document.getElementById("wordInput").value.trim().toLowerCase();
-            
-            if (userInput === "") {
-                alert("Please enter a word.");
+        function translateWord() {
+            const word = document.getElementById("wordInput").value.trim();
+            if (word === "") {
+                alert("Please enter a word!");
                 return;
             }
 
-            fetch(`https://michigan-slang-api.onrender.com/translate?word=${userInput}`)
+            fetch(`https://michigan-slang-api.onrender.com/translate?word=${word}`)
                 .then(response => response.json())
                 .then(data => {
-                    let resultDiv = document.getElementById("translationResult");
-                    if (data.translation && data.translation !== "No translation found. Try another word.") {
-                        resultDiv.innerHTML = `<strong>Translation:</strong> ${data.translation}`;
+                    if (data.translation) {
+                        document.getElementById("translation").innerText = `Translation: ${data.translation}`;
                     } else {
-                        resultDiv.innerHTML = `<span style="color: red;">No translation found. Try another word.</span>`;
+                        document.getElementById("translation").innerText = "No translation found. Try another word.";
                     }
                 })
                 .catch(error => {
                     console.error("Error fetching translation:", error);
-                    document.getElementById("translationResult").innerHTML = 
-                        `<span style="color: red;">Error fetching translation. Try again later.</span>`;
+                    document.getElementById("translation").innerText = "Error fetching translation. Try again later.";
                 });
-        });
+        }
+
+        function selectSlang(word) {
+            document.getElementById("wordInput").value = word;
+        }
     </script>
 
 </body>
