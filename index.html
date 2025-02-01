@@ -112,8 +112,8 @@
                 alert("Please enter a word!");
                 return;
             }
-
-            fetch(`https://michigan-slang-api.onrender.com/translate?word=${word}`)
+        
+            fetch(`https://michigan-slang-api.onrender.com/translate?word=${encodeURIComponent(word)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.translation) {
@@ -127,9 +127,11 @@
                     document.getElementById("translation").innerText = "Error fetching translation. Try again later.";
                 });
         }
-
+        
+        // ✅ Fix: Automatically translate when clicking a slang term
         function selectSlang(word) {
             document.getElementById("wordInput").value = word;
+            translateWord(); // Call translation function immediately
         }
     </script>
 
